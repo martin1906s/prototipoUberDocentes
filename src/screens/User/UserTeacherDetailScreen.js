@@ -253,12 +253,12 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
 
             <ScrollView 
               style={styles.modalScrollContainer} 
-              contentContainerStyle={styles.modalContent}
+              contentContainerStyle={[styles.modalContent, Platform.OS === 'web' && styles.modalContentWeb]}
               showsVerticalScrollIndicator={false}
               bounces={false}
               scrollEventThrottle={16}
               {...(Platform.OS === 'web' && {
-                style: [styles.modalScrollContainer, { maxHeight: '60vh', overflow: 'auto' }],
+                style: [styles.modalScrollContainer, { maxHeight: '70vh', overflow: 'auto' }],
               })}
             >
               {/* Selección de Fecha */}
@@ -379,28 +379,53 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
               )}
             </ScrollView>
 
-            {/* Botones del Modal */}
-            <View style={styles.modalActions}>
-              <AppButton
-                title="Cancelar"
-                leftIcon="close"
-                onPress={closeModal}
-                variant="outline"
-                size="md"
-                style={[styles.modalButton, styles.cancelButton]}
-              />
-              
-              <AppButton
-                title="Confirmar"
-                leftIcon="check"
-                onPress={handleConfirmContract}
-                variant="success"
-                size="md"
-                style={[styles.modalButton, styles.confirmButton]}
-              />
-            </View>
+            {/* Botones del Modal - Solo en móvil */}
+            {Platform.OS !== 'web' && (
+              <View style={styles.modalActions}>
+                <AppButton
+                  title="Cancelar"
+                  leftIcon="close"
+                  onPress={closeModal}
+                  variant="outline"
+                  size="md"
+                  style={[styles.modalButton, styles.cancelButton]}
+                />
+                
+                <AppButton
+                  title="Confirmar"
+                  leftIcon="check"
+                  onPress={handleConfirmContract}
+                  variant="success"
+                  size="md"
+                  style={[styles.modalButton, styles.confirmButton]}
+                />
+              </View>
+            )}
           </View>
         </View>
+        
+        {/* Botones flotantes - Solo en web */}
+        {Platform.OS === 'web' && (
+          <View style={styles.floatingActions}>
+            <AppButton
+              title="Cancelar"
+              leftIcon="close"
+              onPress={closeModal}
+              variant="outline"
+              size="md"
+              style={[styles.modalButton, styles.cancelButton]}
+            />
+            
+            <AppButton
+              title="Confirmar"
+              leftIcon="check"
+              onPress={handleConfirmContract}
+              variant="success"
+              size="md"
+              style={[styles.modalButton, styles.confirmButton]}
+            />
+          </View>
+        )}
       </Modal>
     </GradientBackground>
   );
@@ -646,6 +671,9 @@ const styles = StyleSheet.create({
       boxSizing: 'border-box',
     }),
   },
+  modalContentWeb: {
+    paddingBottom: 100, // Espacio extra para los botones flotantes
+  },
   selectionSection: {
     marginBottom: spacing.xl,
   },
@@ -705,6 +733,30 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.neutral200,
     gap: spacing.md,
+  },
+  floatingActions: {
+    position: 'fixed',
+    bottom: 30,
+    left: '50%',
+    transform: [{ translateX: -160 }], // Centrar los botones
+    backgroundColor: colors.white,
+    borderRadius: radii.xl,
+    padding: spacing.lg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 20,
+    borderWidth: 1,
+    borderColor: colors.neutral200,
+    zIndex: 1000,
+    minWidth: 320,
+    maxWidth: 400,
+    width: 'auto',
+    flexDirection: 'row',
+    gap: spacing.md,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalButton: {
     flexDirection: 'row',
