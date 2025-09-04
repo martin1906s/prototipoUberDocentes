@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert, Modal, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Modal, ScrollView, Platform } from 'react-native';
 import GradientBackground from '../../components/GradientBackground';
 import AppButton from '../../components/AppButton';
 import AppCard from '../../components/AppCard';
@@ -149,6 +149,12 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
         style={styles.scrollContainer} 
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
+        bounces={false}
+        scrollEventThrottle={16}
+        {...(Platform.OS === 'web' && {
+          style: [styles.scrollContainer, { height: '100vh', overflow: 'auto' }],
+          contentContainerStyle: [styles.container, { minHeight: '100vh' }]
+        })}
       >
         <View style={styles.header}>
           <View style={styles.headerTop}>
@@ -249,6 +255,11 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
               style={styles.modalScrollContainer} 
               contentContainerStyle={styles.modalContent}
               showsVerticalScrollIndicator={false}
+              bounces={false}
+              scrollEventThrottle={16}
+              {...(Platform.OS === 'web' && {
+                style: [styles.modalScrollContainer, { maxHeight: '60vh', overflow: 'auto' }],
+              })}
             >
               {/* Selección de Fecha */}
               <View style={styles.selectionSection}>
@@ -398,10 +409,18 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
+    ...(Platform.OS === 'web' && {
+      height: '100vh',
+      overflow: 'auto',
+    }),
   },
   container: {
     padding: spacing.xl,
     paddingBottom: spacing.xxl,
+    ...(Platform.OS === 'web' && {
+      minHeight: '100vh',
+      boxSizing: 'border-box',
+    }),
   },
   header: {
     marginBottom: spacing.lg,
@@ -566,6 +585,10 @@ const styles = StyleSheet.create({
   },
   actionsContainer: {
     gap: spacing.md,
+    ...(Platform.OS === 'web' && {
+      position: 'relative',
+      zIndex: 1,
+    }),
   },
   contractButton: {
     marginBottom: spacing.sm,
@@ -611,10 +634,17 @@ const styles = StyleSheet.create({
   },
   modalScrollContainer: {
     flex: 1,
+    ...(Platform.OS === 'web' && {
+      maxHeight: '60vh',
+      overflow: 'auto',
+    }),
   },
   modalContent: {
     padding: spacing.xl,
     paddingBottom: spacing.xxl,
+    ...(Platform.OS === 'web' && {
+      boxSizing: 'border-box',
+    }),
   },
   selectionSection: {
     marginBottom: spacing.xl,
