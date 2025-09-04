@@ -130,9 +130,9 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
     
     console.log('Proposal created, closing modal and navigating'); // Debug log
     
-    // Cerrar modal y navegar directamente
+    // Cerrar modal y navegar al historial
     setModalVisible(false);
-    navigation.navigate('UserTabs', { screen: 'UserSearch' });
+    navigation.navigate('UserTabs', { screen: 'UserHistory' });
   };
 
   const closeModal = () => {
@@ -145,7 +145,11 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
   return (
     <GradientBackground variant="white" theme="userSearch">
       <BackButton navigation={navigation} />
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.scrollContainer} 
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <View style={styles.headerTop}>
             <View style={styles.welcomeSection}>
@@ -241,7 +245,11 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
               />
             </View>
 
-            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              style={styles.modalScrollContainer} 
+              contentContainerStyle={styles.modalContent}
+              showsVerticalScrollIndicator={false}
+            >
               {/* Selección de Fecha */}
               <View style={styles.selectionSection}>
                 <Text style={styles.sectionTitle}>📅 Selecciona una Fecha</Text>
@@ -388,9 +396,12 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollContainer: {
     flex: 1,
+  },
+  container: {
     padding: spacing.xl,
+    paddingBottom: spacing.xxl,
   },
   header: {
     marginBottom: spacing.lg,
@@ -598,9 +609,12 @@ const styles = StyleSheet.create({
   closeButton: {
     padding: spacing.sm,
   },
-  modalContent: {
+  modalScrollContainer: {
     flex: 1,
+  },
+  modalContent: {
     padding: spacing.xl,
+    paddingBottom: spacing.xxl,
   },
   selectionSection: {
     marginBottom: spacing.xl,
