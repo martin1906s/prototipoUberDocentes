@@ -114,9 +114,16 @@ export default function AppButton({
     marginLeft: leftIcon ? spacing.sm : (icon ? spacing.sm : 0),
   };
 
+  const handlePress = () => {
+    console.log('AppButton pressed:', { title, leftIcon, disabled }); // Debug log
+    if (!disabled && onPress) {
+      onPress();
+    }
+  };
+
   return (
     <AnimatedScale
-      onPress={disabled ? undefined : onPress}
+      onPress={disabled ? undefined : handlePress}
       style={[buttonStyle, style]}
     >
       {leftIcon && (

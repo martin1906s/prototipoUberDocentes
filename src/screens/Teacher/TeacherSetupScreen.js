@@ -109,6 +109,7 @@ export default function TeacherSetupScreen({ navigation }) {
   };
 
   const handleGuardar = () => {
+    console.log('handleGuardar called'); // Debug log
     try {
       const newErrors = {};
       
@@ -118,6 +119,7 @@ export default function TeacherSetupScreen({ navigation }) {
       
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
+        console.log('Validation errors:', newErrors); // Debug log
         Alert.alert('Campos obligatorios', 'Completa todos los campos requeridos.');
         return;
       }
@@ -136,6 +138,7 @@ export default function TeacherSetupScreen({ navigation }) {
         disponibilidad,
       };
       
+      console.log('Saving profile:', perfil); // Debug log
       actions.saveTeacherProfile(perfil);
       actions.updateTeacherSchedule(schedule);
       
@@ -147,14 +150,13 @@ export default function TeacherSetupScreen({ navigation }) {
       };
       actions.setCurrentTeacher(tempTeacher);
       
-      Alert.alert('Perfil Guardado', 'Ahora debes pagar la comisión de registro para continuar', [
-        {
-          text: 'Pagar Comisión',
-          onPress: () => navigation.navigate('PaymentGateway')
-        }
-      ]);
+      console.log('Profile saved, navigating to PaymentGateway'); // Debug log
+      
+      // Navegación directa sin Alert para evitar problemas en producción
+      navigation.navigate('PaymentGateway');
+      
     } catch (error) {
-      // Error al guardar perfil
+      console.error('Error saving profile:', error); // Debug log
       Alert.alert('Error', 'Hubo un problema al guardar el perfil. Inténtalo de nuevo.');
     }
   };

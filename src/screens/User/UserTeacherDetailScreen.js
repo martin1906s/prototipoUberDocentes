@@ -108,7 +108,9 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
   };
 
   const handleConfirmContract = () => {
+    console.log('handleConfirmContract called'); // Debug log
     if (!selectedDate || !selectedTime) {
+      console.log('Missing date or time:', { selectedDate, selectedTime }); // Debug log
       Alert.alert('Error', 'Por favor selecciona una fecha y hora');
       return;
     }
@@ -123,21 +125,14 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
       duracion: selectedDuration,
     };
 
+    console.log('Creating proposal:', proposal); // Debug log
     actions.createProposal(proposal);
     
-    Alert.alert(
-      '¡Propuesta Enviada!', 
-      'Tu solicitud ha sido enviada al docente. Te contactaremos pronto.',
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-            setModalVisible(false);
-            navigation.navigate('UserTabs', { screen: 'UserSearch' });
-          }
-        }
-      ]
-    );
+    console.log('Proposal created, closing modal and navigating'); // Debug log
+    
+    // Cerrar modal y navegar directamente
+    setModalVisible(false);
+    navigation.navigate('UserTabs', { screen: 'UserSearch' });
   };
 
   const closeModal = () => {
@@ -368,7 +363,7 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
             {/* Botones del Modal */}
             <View style={styles.modalActions}>
               <AppButton
-                iconOnly
+                title="Cancelar"
                 leftIcon="close"
                 onPress={closeModal}
                 variant="outline"
@@ -377,7 +372,7 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
               />
               
               <AppButton
-                iconOnly
+                title="Confirmar"
                 leftIcon="check"
                 onPress={handleConfirmContract}
                 variant="success"
