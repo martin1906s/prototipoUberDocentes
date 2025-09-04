@@ -206,6 +206,7 @@ export default function TeacherSetupScreen({ navigation }) {
   };
 
   const handlePayment = () => {
+    console.log('handlePayment called'); // Debug log
     // Simular pago exitoso
     Alert.alert(
       'Pago Exitoso',
@@ -214,6 +215,7 @@ export default function TeacherSetupScreen({ navigation }) {
         {
           text: 'Continuar',
           onPress: () => {
+            console.log('Payment confirmed, navigating to TeacherTabs'); // Debug log
             setShowPaymentModal(false);
             // Marcar como pagado y navegar al dashboard
             actions.setCurrentTeacher({
@@ -815,6 +817,7 @@ export default function TeacherSetupScreen({ navigation }) {
 
             <View style={styles.modalActions}>
               <AppButton
+                title="Cancelar"
                 leftIcon="close"
                 onPress={() => setShowPaymentModal(false)}
                 variant="outline"
@@ -823,6 +826,7 @@ export default function TeacherSetupScreen({ navigation }) {
               />
               
               <AppButton
+                title="Pagar $26.50"
                 leftIcon="attach-money"
                 onPress={handlePayment}
                 variant="success"
