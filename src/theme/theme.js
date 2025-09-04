@@ -139,7 +139,7 @@ export const spacing = {
   xs: 6,
   sm: 10,
   md: 14,
-  lg: 18,
+  lg: 10,
   xl: 24,
   xxl: 32,
   // Espaciado adicional para mejor UX

@@ -149,89 +149,117 @@ export default function UserSearchScreen({ navigation }) {
             }
           ]}
         >
-          <View style={styles.filtersHeader}>
-            <Text style={styles.filtersTitle}>Filtros</Text>
-            <TouchableOpacity onPress={clearFilters} style={styles.clearButton}>
-              <MaterialIcons name="clear" size={16} color={colors.themes.userSearch.primary} />
-              <Text style={styles.clearButtonText}>Limpiar</Text>
-            </TouchableOpacity>
+          {/* Header con gradiente vibrante */}
+          <View style={styles.filtersHeaderGradient}>
+            <View style={styles.filtersHeader}>
+              <View style={styles.filtersTitleContainer}>
+                <View style={styles.filtersIconContainer}>
+                  <MaterialIcons name="tune" size={20} color="white" />
+                </View>
+                <Text style={styles.filtersTitle}>Filtros Avanzados</Text>
+              </View>
+              <TouchableOpacity onPress={clearFilters} style={styles.clearButton}>
+                <MaterialIcons name="refresh" size={18} color="white" />
+                <Text style={styles.clearButtonText}>Limpiar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
           
-          <View style={styles.filtersGrid}>
+          <View style={styles.filtersContent}>
             {/* Primera fila - Especialidad y Institución */}
             <View style={styles.filtersRow}>
-              <View style={styles.filterItem}>
+              <View style={styles.filterCard}>
                 <View style={styles.filterHeader}>
-                  <MaterialIcons name="school" size={16} color={colors.themes.userSearch.primary} />
-                  <Text style={styles.filterLabel}>Especialidad</Text>
+                  <View style={styles.filterIconContainer}>
+                    <MaterialIcons name="school" size={18} color="#00BCD4" />
+                  </View>
+                  <Text style={styles.filterLabel}>Materia</Text>
                 </View>
-                <DropdownList 
-                  options={["Todos", "Matemática", "Física", "Inglés", "Literatura", "Química", "Biología", "Historia", "Geografía", "Arte", "Dibujo", "Música", "Piano", "Francés", "Español", "Informática", "Programación", "Psicología", "Orientación", "Economía", "Contabilidad", "Filosofía", "Ética", "Educación Física", "Deportes"]} 
-                  value={filtro} 
-                  onChange={setFiltro}
-                  placeholder="Seleccionar"
-                />
+                <View style={styles.dropdownContainer}>
+                  <DropdownList 
+                    options={["Todos", "Matemática", "Física", "Inglés", "Literatura", "Química", "Biología", "Historia", "Geografía", "Arte", "Dibujo", "Música", "Piano", "Francés", "Español", "Informática", "Programación", "Psicología", "Orientación", "Economía", "Contabilidad", "Filosofía", "Ética", "Educación Física", "Deportes"]} 
+                    value={filtro} 
+                    onChange={setFiltro}
+                    placeholder="Seleccionar"
+                  />
+                </View>
               </View>
               
-              <View style={styles.filterItem}>
+              <View style={styles.filterCard}>
                 <View style={styles.filterHeader}>
-                  <MaterialIcons name="business" size={16} color={colors.themes.userSearch.primary} />
+                  <View style={styles.filterIconContainer}>
+                    <MaterialIcons name="business" size={18} color="#8B5CF6" />
+                  </View>
                   <Text style={styles.filterLabel}>Institución</Text>
                 </View>
-                <DropdownList 
-                  options={["Todas", "Escuela", "Colegio", "Universidad"]} 
-                  value={tipoInstitucion} 
-                  onChange={setTipoInstitucion}
-                  placeholder="Tipo"
-                />
+                <View style={styles.dropdownContainer}>
+                  <DropdownList 
+                    options={["Todas", "Escuela", "Colegio", "Universidad"]} 
+                    value={tipoInstitucion} 
+                    onChange={setTipoInstitucion}
+                    placeholder="Tipo"
+                  />
+                </View>
               </View>
             </View>
 
             {/* Segunda fila - Horario y Provincia */}
             <View style={styles.filtersRow}>
-              <View style={styles.filterItem}>
+              <View style={styles.filterCard}>
                 <View style={styles.filterHeader}>
-                  <MaterialIcons name="schedule" size={16} color={colors.themes.userSearch.primary} />
+                  <View style={styles.filterIconContainer}>
+                    <MaterialIcons name="schedule" size={18} color="#F59E0B" />
+                  </View>
                   <Text style={styles.filterLabel}>Horario</Text>
                 </View>
-                <DropdownList 
-                  options={disponibilidadOptions} 
-                  value={disponibilidad} 
-                  onChange={setDisponibilidad}
-                  placeholder="Disponibilidad"
-                />
+                <View style={styles.dropdownContainer}>
+                  <DropdownList 
+                    options={disponibilidadOptions} 
+                    value={disponibilidad} 
+                    onChange={setDisponibilidad}
+                    placeholder="Disponibilidad"
+                  />
+                </View>
               </View>
               
-              <View style={styles.filterItem}>
+              <View style={styles.filterCard}>
                 <View style={styles.filterHeader}>
-                  <MaterialIcons name="place" size={16} color={colors.themes.userSearch.primary} />
+                  <View style={styles.filterIconContainer}>
+                    <MaterialIcons name="place" size={18} color="#EF4444" />
+                  </View>
                   <Text style={styles.filterLabel}>Provincia</Text>
                 </View>
-                <DropdownList 
-                  options={["Todas", ...getProvinces()]} 
-                  value={provincia} 
-                  onChange={handleProvinceSelect}
-                  placeholder="Provincia"
-                />
+                <View style={styles.dropdownContainer}>
+                  <DropdownList 
+                    options={["Todas", ...getProvinces()]} 
+                    value={provincia} 
+                    onChange={handleProvinceSelect}
+                    placeholder="Provincia"
+                  />
+                </View>
               </View>
             </View>
 
             {/* Tercera fila - Ciudad (solo si hay provincia seleccionada) */}
             {provincia !== 'Todas' && (
               <View style={styles.filtersRow}>
-                <View style={styles.filterItem}>
+                <View style={styles.filterCard}>
                   <View style={styles.filterHeader}>
-                    <MaterialIcons name="location-city" size={16} color={colors.themes.userSearch.primary} />
+                    <View style={styles.filterIconContainer}>
+                      <MaterialIcons name="location-city" size={18} color="#10B981" />
+                    </View>
                     <Text style={styles.filterLabel}>Ciudad</Text>
                   </View>
-                  <DropdownList 
-                    options={["Todas", ...getCitiesByProvince(provincia)]} 
-                    value={ciudad} 
-                    onChange={handleCitySelect}
-                    placeholder="Ciudad"
-                  />
+                  <View style={styles.dropdownContainer}>
+                    <DropdownList 
+                      options={["Todas", ...getCitiesByProvince(provincia)]} 
+                      value={ciudad} 
+                      onChange={handleCitySelect}
+                      placeholder="Ciudad"
+                    />
+                  </View>
                 </View>
-                <View style={styles.filterItem} />
+                <View style={styles.filterCard} />
               </View>
             )}
           </View>
@@ -240,18 +268,18 @@ export default function UserSearchScreen({ navigation }) {
 
       <View style={styles.resultsSection}>
         <View style={styles.resultsHeader}>
-          <Text style={styles.resultsTitle}>
-            {filtered.length} {filtered.length === 1 ? 'docente encontrado' : 'docentes encontrados'}
-          </Text>
+          <View style={styles.resultsTitleContainer}>
+            <View style={styles.resultsIconContainer}>
+              <MaterialIcons name="search" size={20} color="white" />
+            </View>
+            <Text style={styles.resultsTitle}>
+              {filtered.length} {filtered.length === 1 ? 'docente encontrado' : 'docentes encontrados'}
+            </Text>
+          </View>
           {filtered.length > 0 && (
-            <AppButton
-              iconOnly
-              leftIcon="sort"
-              onPress={toggleFilters}
-              variant="outline"
-              size="md"
-              style={styles.sortButton}
-            />
+            <TouchableOpacity onPress={toggleFilters} style={styles.toggleFiltersButton}>
+              <MaterialIcons name="tune" size={18} color="#00BCD4" />
+            </TouchableOpacity>
           )}
         </View>
       </View>
@@ -261,20 +289,16 @@ export default function UserSearchScreen({ navigation }) {
   const ListEmptyComponent = () => (
     <View style={styles.emptyState}>
       <View style={styles.emptyIconContainer}>
-        <Text style={styles.emptyEmoji}>🔍</Text>
+        <MaterialIcons name="search-off" size={40} color="#00BCD4" />
       </View>
       <Text style={styles.emptyTitle}>No se encontraron docentes</Text>
       <Text style={styles.emptySubtitle}>
         Intenta ajustar los filtros para encontrar más opciones
       </Text>
-      <AppButton
-        iconOnly
-        leftIcon="refresh"
-        onPress={clearFilters}
-        variant="primary"
-        size="md"
-        style={styles.emptyActionButton}
-      />
+      <TouchableOpacity onPress={clearFilters} style={styles.emptyActionButton}>
+        <MaterialIcons name="refresh" size={20} color="white" />
+        <Text style={styles.emptyActionText}>Limpiar Filtros</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -297,7 +321,7 @@ export default function UserSearchScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: spacing.xl,
+    padding: spacing.lg,
   },
   flatList: {
     flex: 1,
@@ -340,89 +364,129 @@ const styles = StyleSheet.create({
   welcomeText: {
     ...typography.subtitle,
     color: colors.themes.userSearch.primary,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     marginBottom: spacing.xs,
   },
   welcomeSubtext: {
     ...typography.bodySmall,
     color: colors.themes.userSearch.textSecondary,
-    fontSize: 14,
+    fontSize: 13,
   },
 
   filtersSection: {
     backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    borderRadius: 12,
-    padding: spacing.lg,
+    borderRadius: 20,
     marginBottom: spacing.lg,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowColor: '#00BCD4',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 12,
     borderWidth: 1,
-    borderColor: 'rgba(8, 145, 178, 0.12)',
+    borderColor: 'rgba(0, 188, 212, 0.2)',
+    overflow: 'hidden',
+  },
+  filtersHeaderGradient: {
+    backgroundColor: '#00BCD4',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   filtersHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.lg,
+  },
+  filtersTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  filtersIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.sm,
   },
   filtersTitle: {
     ...typography.subtitle,
-    color: colors.themes.userSearch.primary,
-    fontSize: 18,
-    fontWeight: '700',
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: 0.3,
+    flex: 1,
   },
   clearButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(8, 145, 178, 0.08)',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: 8,
+    paddingVertical: spacing.sm,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(8, 145, 178, 0.2)',
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    flexShrink: 0,
   },
   clearButtonText: {
     ...typography.caption,
-    color: colors.themes.userSearch.primary,
+    color: 'white',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     marginLeft: spacing.xs,
   },
-  clearFiltersButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.themes.userSearch.primary,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: 8,
-    minWidth: 40,
-    minHeight: 40,
-  },
-  filtersGrid: {
-    gap: spacing.md,
+  filtersContent: {
+    padding: spacing.lg,
+    gap: spacing.lg,
   },
   filtersRow: {
     flexDirection: 'row',
     gap: spacing.md,
   },
-  filterItem: {
+  filterCard: {
     flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 16,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 188, 212, 0.1)',
+    shadowColor: '#00BCD4',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   filterHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+  filterIconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(0, 188, 212, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.sm,
   },
   filterLabel: {
     ...typography.caption,
-    color: colors.themes.userSearch.primary,
+    color: '#0F172A',
     fontSize: 12,
-    fontWeight: '600',
-    marginLeft: spacing.xs,
+    fontWeight: '700',
+    letterSpacing: 0.2,
+    flex: 1,
+  },
+  dropdownContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 188, 212, 0.2)',
+    overflow: 'hidden',
   },
   resultsSection: {
     flex: 1,
@@ -432,24 +496,55 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: spacing.lg,
+    backgroundColor: 'rgba(0, 188, 212, 0.1)',
+    borderRadius: 16,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 188, 212, 0.2)',
+  },
+  resultsTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  resultsIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#00BCD4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.sm,
+    shadowColor: '#00BCD4',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   resultsTitle: {
     ...typography.subtitle,
-    color: colors.themes.userSearch.primary,
-    fontSize: 18,
+    color: '#0F172A',
+    fontSize: 14,
     fontWeight: '700',
+    letterSpacing: 0.2,
+    flex: 1,
   },
-  sortButton: {
+  toggleFiltersButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.themes.userSearch.card,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.themes.userSearch.primary,
-    minWidth: 40,
-    minHeight: 40,
+    borderColor: 'rgba(0, 188, 212, 0.3)',
+    minWidth: 44,
+    minHeight: 44,
+    shadowColor: '#00BCD4',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   teachersList: {
     paddingBottom: spacing.xxl,
@@ -459,46 +554,59 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xxl,
   },
   emptyIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.themes.userSearch.card,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(0, 188, 212, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.lg,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  emptyEmoji: {
-    fontSize: 32,
+    borderWidth: 2,
+    borderColor: 'rgba(0, 188, 212, 0.2)',
+    shadowColor: '#00BCD4',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
   },
   emptyTitle: {
     ...typography.subtitle,
-    color: '#0891B2',
+    color: '#00BCD4',
     marginBottom: spacing.sm,
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '800',
     textAlign: 'center',
+    letterSpacing: 0.3,
+    maxWidth: 280,
   },
   emptySubtitle: {
     ...typography.bodySmall,
-    color: '#475569',
+    color: '#64748B',
     textAlign: 'center',
-    fontSize: 15,
-    lineHeight: 22,
-    marginBottom: spacing.lg,
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: spacing.xl,
+    maxWidth: 280,
   },
   emptyActionButton: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#0891B2',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.lg,
-    borderRadius: 12,
-    minWidth: 56,
-    minHeight: 56,
+    backgroundColor: '#00BCD4',
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    borderRadius: 16,
+    shadowColor: '#00BCD4',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  emptyActionText: {
+    ...typography.button,
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '700',
+    marginLeft: spacing.sm,
   },
 });
