@@ -40,6 +40,7 @@ export default function TeacherSetupScreen({ navigation }) {
   const [showProvinceDropdown, setShowProvinceDropdown] = useState(false);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [schedule, setSchedule] = useState(state.teacherSchedule || {
     Lunes: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'],
     Martes: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'],
@@ -206,30 +207,65 @@ export default function TeacherSetupScreen({ navigation }) {
   };
 
   const handlePayment = () => {
-    console.log('handlePayment called'); // Debug log
-    // Simular pago exitoso
-    Alert.alert(
-      'Pago Exitoso',
-      'Tu registro ha sido completado exitosamente. Ahora puedes recibir propuestas de estudiantes.',
-      [
-        {
-          text: 'Continuar',
-          onPress: () => {
-            console.log('Payment confirmed, navigating to TeacherTabs'); // Debug log
-            setShowPaymentModal(false);
-            // Marcar como pagado y navegar al dashboard
-            actions.setCurrentTeacher({
-              ...state.currentTeacher,
-              isPaid: true
-            });
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'TeacherTabs' }],
-            });
+    console.log('handlePayment called, isProcessingPayment:', isProcessingPayment); // Debug log
+    
+    // Evitar múltiples clics
+    if (isProcessingPayment) {
+      console.log('Payment already processing, ignoring click'); // Debug log
+      return;
+    }
+    
+    setIsProcessingPayment(true);
+    
+    // En web, usar confirm en lugar de Alert.alert
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm('¿Confirmar el pago de $26.50 USD?');
+      if (confirmed) {
+        console.log('Payment confirmed via web confirm, navigating to TeacherTabs'); // Debug log
+        setShowPaymentModal(false);
+        // Marcar como pagado y navegar al dashboard
+        actions.setCurrentTeacher({
+          ...state.currentTeacher,
+          isPaid: true
+        });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'TeacherTabs' }],
+        });
+      } else {
+        setIsProcessingPayment(false);
+      }
+    } else {
+      // En móvil usar Alert.alert
+      Alert.alert(
+        'Pago Exitoso',
+        'Tu registro ha sido completado exitosamente. Ahora puedes recibir propuestas de estudiantes.',
+        [
+          {
+            text: 'Continuar',
+            onPress: () => {
+              console.log('Payment confirmed via Alert, navigating to TeacherTabs'); // Debug log
+              setShowPaymentModal(false);
+              // Marcar como pagado y navegar al dashboard
+              actions.setCurrentTeacher({
+                ...state.currentTeacher,
+                isPaid: true
+              });
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'TeacherTabs' }],
+              });
+            }
+          },
+          {
+            text: 'Cancelar',
+            onPress: () => {
+              setIsProcessingPayment(false);
+            }
           }
-        }
-      ]
-    );
+        ]
+      );
+    }
   };
 
   const handleAutocompletar = () => {
@@ -777,7 +813,10 @@ export default function TeacherSetupScreen({ navigation }) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>💳 Completar Registro</Text>
               <TouchableOpacity 
-                onPress={() => setShowPaymentModal(false)}
+                onPress={() => {
+                  setShowPaymentModal(false);
+                  setIsProcessingPayment(false);
+                }}
                 style={styles.closeButton}
               >
                 <MaterialIcons name="close" size={24} color={colors.neutral600} />
@@ -819,18 +858,23 @@ export default function TeacherSetupScreen({ navigation }) {
               <AppButton
                 title="Cancelar"
                 leftIcon="close"
-                onPress={() => setShowPaymentModal(false)}
+                onPress={() => {
+                  setShowPaymentModal(false);
+                  setIsProcessingPayment(false);
+                }}
                 variant="outline"
                 size="md"
                 style={[styles.modalButton, styles.cancelButton]}
               />
               
               <AppButton
-                title="Pagar $26.50"
+                title={isProcessingPayment ? "Procesando..." : "Pagar $26.50"}
                 leftIcon="attach-money"
                 onPress={handlePayment}
                 variant="success"
                 size="md"
+                disabled={isProcessingPayment}
+                loading={isProcessingPayment}
                 style={[styles.modalButton, styles.payButton]}
               />
             </View>
