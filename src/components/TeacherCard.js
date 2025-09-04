@@ -89,22 +89,6 @@ export default function TeacherCard({ teacher, onPress }) {
           )}
         </View>
 
-        {/* Niveles Estudiantiles */}
-        {Array.isArray(teacher.nivelEstudiantil) && teacher.nivelEstudiantil.length > 0 && (
-          <View style={styles.levelsContainer}>
-            <View style={styles.levelsHeader}>
-              <MaterialIcons name="class" size={16} color={colors.warning} />
-              <Text style={styles.levelsTitle}>Niveles que enseña</Text>
-            </View>
-            <View style={styles.levelsList}>
-              {teacher.nivelEstudiantil.map((level, index) => (
-                <View key={`level-${level}-${index}`} style={styles.levelTag}>
-                  <Text style={styles.levelText}>{level}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
 
         <View style={styles.footer}>
           <View style={styles.locationContainer}>
@@ -250,39 +234,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: colors.neutral700,
-  },
-  // Estilos para niveles estudiantiles
-  levelsContainer: {
-    marginBottom: spacing.md,
-  },
-  levelsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  levelsTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.neutral700,
-    marginLeft: spacing.xs,
-  },
-  levelsList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-  },
-  levelTag: {
-    backgroundColor: colors.warning + '15',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: colors.warning + '30',
-  },
-  levelText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: colors.warning,
   },
   footer: {
     flexDirection: 'row',

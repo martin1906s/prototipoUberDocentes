@@ -8,6 +8,7 @@ import OptionsMenu from '../../components/OptionsMenu';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useStore } from '../../store/store';
 import { colors, spacing, typography } from '../../theme/theme';
+import { getProvinces, getCitiesByProvince, getProvinceByCity } from '../../data/ecuadorLocations';
 
 const disponibilidadOptions = ["Todas", "Mañana", "Tarde", "Noche"];
 
@@ -32,6 +33,8 @@ export default function UserSearchScreen({ navigation }) {
   const [filtro, setFiltro] = useState('Todos');
   const [disponibilidad, setDisponibilidad] = useState('Todas');
   const [tipoInstitucion, setTipoInstitucion] = useState('Todas');
+  const [provincia, setProvincia] = useState('Todas');
+  const [ciudad, setCiudad] = useState('Todas');
   const [showFilters, setShowFilters] = useState(true);
   const [filtersAnimation] = useState(new Animated.Value(1));
 
@@ -52,6 +55,17 @@ export default function UserSearchScreen({ navigation }) {
     setFiltro('Todos');
     setDisponibilidad('Todas');
     setTipoInstitucion('Todas');
+    setProvincia('Todas');
+    setCiudad('Todas');
+  };
+
+  const handleProvinceSelect = (selectedProvince) => {
+    setProvincia(selectedProvince);
+    setCiudad('Todas'); // Limpiar ciudad cuando cambie la provincia
+  };
+
+  const handleCitySelect = (selectedCity) => {
+    setCiudad(selectedCity);
   };
 
   const filtered = useMemo(() => {
@@ -65,8 +79,18 @@ export default function UserSearchScreen({ navigation }) {
     if (tipoInstitucion !== 'Todas') {
       base = base.filter((t) => (t.tipoInstitucion || '').toLowerCase() === tipoInstitucion.toLowerCase());
     }
+    if (provincia !== 'Todas') {
+      base = base.filter((t) => {
+        const ubicacion = t.ubicacion || '';
+        const provinciaDelDocente = getProvinceByCity(ubicacion);
+        return provinciaDelDocente === provincia;
+      });
+    }
+    if (ciudad !== 'Todas') {
+      base = base.filter((t) => (t.ubicacion || '').toLowerCase() === ciudad.toLowerCase());
+    }
     return base;
-  }, [filtro, disponibilidad, tipoInstitucion, state.teachers]);
+  }, [filtro, disponibilidad, tipoInstitucion, provincia, ciudad, state.teachers]);
 
   const renderItem = ({ item }) => {
     // Transformar los datos del store al formato esperado por TeacherCard
@@ -125,68 +149,91 @@ export default function UserSearchScreen({ navigation }) {
             }
           ]}
         >
-                     <View style={styles.filtersHeader}>
-             <Text style={styles.filtersTitle}>Filtros de Búsqueda</Text>
-           </View>
+          <View style={styles.filtersHeader}>
+            <Text style={styles.filtersTitle}>Filtros</Text>
+            <TouchableOpacity onPress={clearFilters} style={styles.clearButton}>
+              <MaterialIcons name="clear" size={16} color={colors.themes.userSearch.primary} />
+              <Text style={styles.clearButtonText}>Limpiar</Text>
+            </TouchableOpacity>
+          </View>
           
           <View style={styles.filtersGrid}>
-            {/* Filtro 1: Especialidades */}
-            <View style={styles.filterRow}>
-              <View style={styles.filterGroup}>
-                <View style={styles.filterLabelContainer}>
-                  <View style={styles.filterIconContainer}>
-                    <Text style={styles.filterEmoji}>📚</Text>
-                  </View>
-                  <Text style={styles.filterLabel}>Especialidades</Text>
+            {/* Primera fila - Especialidad y Institución */}
+            <View style={styles.filtersRow}>
+              <View style={styles.filterItem}>
+                <View style={styles.filterHeader}>
+                  <MaterialIcons name="school" size={16} color={colors.themes.userSearch.primary} />
+                  <Text style={styles.filterLabel}>Especialidad</Text>
                 </View>
                 <DropdownList 
                   options={["Todos", "Matemática", "Física", "Inglés", "Literatura", "Química", "Biología", "Historia", "Geografía", "Arte", "Dibujo", "Música", "Piano", "Francés", "Español", "Informática", "Programación", "Psicología", "Orientación", "Economía", "Contabilidad", "Filosofía", "Ética", "Educación Física", "Deportes"]} 
                   value={filtro} 
                   onChange={setFiltro}
-                  placeholder="Seleccionar especialidad"
+                  placeholder="Seleccionar"
                 />
               </View>
-            </View>
-
-
-
-            {/* Filtro 3: Tipo de Institución */}
-            <View style={styles.filterRow}>
-              <View style={styles.filterGroup}>
-                <View style={styles.filterLabelContainer}>
-                  <View style={styles.filterIconContainer}>
-                    <Text style={styles.filterEmoji}>🏫</Text>
-                  </View>
-                  <Text style={styles.filterLabel}>Tipo de Institución</Text>
+              
+              <View style={styles.filterItem}>
+                <View style={styles.filterHeader}>
+                  <MaterialIcons name="business" size={16} color={colors.themes.userSearch.primary} />
+                  <Text style={styles.filterLabel}>Institución</Text>
                 </View>
                 <DropdownList 
                   options={["Todas", "Escuela", "Colegio", "Universidad"]} 
                   value={tipoInstitucion} 
                   onChange={setTipoInstitucion}
-                  placeholder="Seleccionar institución"
+                  placeholder="Tipo"
                 />
               </View>
             </View>
 
-            {/* Filtro 4: Disponibilidad */}
-            <View style={styles.filterRow}>
-              <View style={styles.filterGroup}>
-                <View style={styles.filterLabelContainer}>
-                  <View style={styles.filterIconContainer}>
-                    <Text style={styles.filterEmoji}>⏰</Text>
-                  </View>
-                  <Text style={styles.filterLabel}>Disponibilidad</Text>
+            {/* Segunda fila - Horario y Provincia */}
+            <View style={styles.filtersRow}>
+              <View style={styles.filterItem}>
+                <View style={styles.filterHeader}>
+                  <MaterialIcons name="schedule" size={16} color={colors.themes.userSearch.primary} />
+                  <Text style={styles.filterLabel}>Horario</Text>
                 </View>
                 <DropdownList 
                   options={disponibilidadOptions} 
                   value={disponibilidad} 
                   onChange={setDisponibilidad}
-                  placeholder="Seleccionar horario"
+                  placeholder="Disponibilidad"
+                />
+              </View>
+              
+              <View style={styles.filterItem}>
+                <View style={styles.filterHeader}>
+                  <MaterialIcons name="place" size={16} color={colors.themes.userSearch.primary} />
+                  <Text style={styles.filterLabel}>Provincia</Text>
+                </View>
+                <DropdownList 
+                  options={["Todas", ...getProvinces()]} 
+                  value={provincia} 
+                  onChange={handleProvinceSelect}
+                  placeholder="Provincia"
                 />
               </View>
             </View>
 
-
+            {/* Tercera fila - Ciudad (solo si hay provincia seleccionada) */}
+            {provincia !== 'Todas' && (
+              <View style={styles.filtersRow}>
+                <View style={styles.filterItem}>
+                  <View style={styles.filterHeader}>
+                    <MaterialIcons name="location-city" size={16} color={colors.themes.userSearch.primary} />
+                    <Text style={styles.filterLabel}>Ciudad</Text>
+                  </View>
+                  <DropdownList 
+                    options={["Todas", ...getCitiesByProvince(provincia)]} 
+                    value={ciudad} 
+                    onChange={handleCitySelect}
+                    placeholder="Ciudad"
+                  />
+                </View>
+                <View style={styles.filterItem} />
+              </View>
+            )}
           </View>
         </Animated.View>
       )}
@@ -304,35 +351,46 @@ const styles = StyleSheet.create({
   },
 
   filtersSection: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 16,
-    padding: spacing.md,
-    marginBottom: spacing.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+    borderRadius: 12,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
     borderWidth: 1,
-    borderColor: 'rgba(8, 145, 178, 0.15)',
-    borderTopWidth: 2,
-    borderTopColor: 'rgba(8, 145, 178, 0.3)',
+    borderColor: 'rgba(8, 145, 178, 0.12)',
   },
   filtersHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.sm,
-    paddingBottom: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(8, 145, 178, 0.1)',
+    marginBottom: spacing.lg,
   },
   filtersTitle: {
     ...typography.subtitle,
     color: colors.themes.userSearch.primary,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
-    textShadowColor: 'rgba(8, 145, 178, 0.2)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
+  },
+  clearButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(8, 145, 178, 0.08)',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(8, 145, 178, 0.2)',
+  },
+  clearButtonText: {
+    ...typography.caption,
+    color: colors.themes.userSearch.primary,
+    fontSize: 12,
+    fontWeight: '600',
+    marginLeft: spacing.xs,
   },
   clearFiltersButton: {
     alignItems: 'center',
@@ -345,57 +403,26 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   filtersGrid: {
-    gap: spacing.sm,
+    gap: spacing.md,
   },
-  filterRow: {
-    marginBottom: spacing.sm,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    borderRadius: 12,
-    padding: spacing.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(8, 145, 178, 0.08)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
+  filtersRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
   },
-
-  filterGroup: {
-    marginBottom: 0,
+  filterItem: {
+    flex: 1,
   },
-  filterLabelContainer: {
+  filterHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing.xs,
   },
-  filterIconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(8, 145, 178, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.sm,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: 'rgba(8, 145, 178, 0.15)',
-  },
-  filterEmoji: {
-    fontSize: 14,
-  },
   filterLabel: {
-    ...typography.body,
+    ...typography.caption,
     color: colors.themes.userSearch.primary,
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
-    textShadowColor: 'rgba(8, 145, 178, 0.15)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
+    marginLeft: spacing.xs,
   },
   resultsSection: {
     flex: 1,

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, Animated, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, Animated, Dimensions, KeyboardAvoidingView, Platform, Modal } from 'react-native';
 import GradientBackground from '../../components/GradientBackground';
 import AppInput from '../../components/AppInput';
 import AppButton from '../../components/AppButton';
@@ -11,6 +11,7 @@ import { ChipGroup } from '../../components/Chips';
 import StepIndicator from '../../components/StepIndicator';
 import { useStore } from '../../store/store';
 import { spacing, radii, colors, typography, elevation, animations } from '../../theme/theme';
+import { getProvinces, getCitiesByProvince } from '../../data/ecuadorLocations';
 
 const { width } = Dimensions.get('window');
 
@@ -29,12 +30,15 @@ export default function TeacherSetupScreen({ navigation }) {
   const [especialidadInput, setEspecialidadInput] = useState('');
   const [experiencia, setExperiencia] = useState(state.teacherProfile?.experiencia || '0-2 años');
   const [descripcion, setDescripcion] = useState(state.teacherProfile?.descripcion || '');
-  const [ubicacion, setUbicacion] = useState(state.teacherProfile?.ubicacion || '');
+  const [provincia, setProvincia] = useState(state.teacherProfile?.provincia || '');
+  const [ciudad, setCiudad] = useState(state.teacherProfile?.ciudad || '');
   const [tipoInstitucion, setTipoInstitucion] = useState(state.teacherProfile?.tipoInstitucion || '');
   // REMOVED: nivelEstudiantil state
   const [precioHora, setPrecioHora] = useState(state.teacherProfile?.precioHora || '');
   const [disponibilidad, setDisponibilidad] = useState(state.teacherProfile?.disponibilidad || '');
   const [selectedDay, setSelectedDay] = useState(0);
+  const [showProvinceDropdown, setShowProvinceDropdown] = useState(false);
+  const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [schedule, setSchedule] = useState(state.teacherSchedule || {
     Lunes: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'],
     Martes: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'],
@@ -131,7 +135,9 @@ export default function TeacherSetupScreen({ navigation }) {
         especialidades,
         experiencia,
         descripcion,
-        ubicacion,
+        provincia,
+        ciudad,
+        ubicacion: `${ciudad}, ${provincia}`, // Mantener compatibilidad
         tipoInstitucion,
         // REMOVED: nivelEstudiantil
         precioHora,
@@ -159,6 +165,18 @@ export default function TeacherSetupScreen({ navigation }) {
       console.error('Error saving profile:', error); // Debug log
       Alert.alert('Error', 'Hubo un problema al guardar el perfil. Inténtalo de nuevo.');
     }
+  };
+
+  // Funciones para manejar ubicación
+  const handleProvinceSelect = (selectedProvince) => {
+    setProvincia(selectedProvince);
+    setCiudad(''); // Limpiar ciudad cuando cambie la provincia
+    setShowProvinceDropdown(false);
+  };
+
+  const handleCitySelect = (selectedCity) => {
+    setCiudad(selectedCity);
+    setShowCityDropdown(false);
   };
 
   const toggleTimeSlot = (day, time) => {
@@ -193,7 +211,8 @@ export default function TeacherSetupScreen({ navigation }) {
     setEspecialidades(['Matemática', 'Física']);
     setExperiencia('3-5 años');
     setDescripcion('Docente con amplia experiencia en matemáticas y física. Especializado en preparación para exámenes universitarios y apoyo escolar.');
-    setUbicacion('Quito, Ecuador');
+    setProvincia('Pichincha');
+    setCiudad('Quito');
     setTipoInstitucion('colegio');
     // REMOVED: nivelEstudiantil
     setPrecioHora('25');
@@ -310,14 +329,119 @@ export default function TeacherSetupScreen({ navigation }) {
               style={styles.input}
             />
             
-            <AppInput 
-              label="Ubicación"
-              placeholder="Ciudad, País"
-              value={ubicacion} 
-              onChangeText={setUbicacion}
-              leftIcon="location-on"
-              style={styles.input}
-            />
+            {/* Selección de Provincia */}
+            <View style={styles.locationContainer}>
+              <Text style={styles.fieldLabel}>Provincia</Text>
+              <TouchableOpacity 
+                style={styles.dropdownButton}
+                onPress={() => setShowProvinceDropdown(true)}
+              >
+                <Text style={[styles.dropdownText, !provincia && styles.placeholderText]}>
+                  {provincia || 'Selecciona una provincia'}
+                </Text>
+                <MaterialIcons 
+                  name="keyboard-arrow-down" 
+                  size={24} 
+                  color={colors.themes.teacherSetup.textSecondary} 
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* Modal de Provincias */}
+            <Modal
+              visible={showProvinceDropdown}
+              transparent={true}
+              animationType="slide"
+              onRequestClose={() => setShowProvinceDropdown(false)}
+            >
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalHeader}>
+                    <Text style={styles.modalTitle}>Seleccionar Provincia</Text>
+                    <TouchableOpacity 
+                      onPress={() => setShowProvinceDropdown(false)}
+                      style={styles.closeButton}
+                    >
+                      <MaterialIcons name="close" size={24} color={colors.themes.teacherSetup.textSecondary} />
+                    </TouchableOpacity>
+                  </View>
+                  <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={true}>
+                    {getProvinces().map((prov) => (
+                      <TouchableOpacity
+                        key={prov}
+                        style={[styles.modalItem, provincia === prov && styles.modalItemSelected]}
+                        onPress={() => handleProvinceSelect(prov)}
+                      >
+                        <Text style={[styles.modalItemText, provincia === prov && styles.modalItemTextSelected]}>
+                          {prov}
+                        </Text>
+                        {provincia === prov && (
+                          <MaterialIcons name="check" size={20} color={colors.themes.teacherSetup.primary} />
+                        )}
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              </View>
+            </Modal>
+
+            {/* Selección de Ciudad */}
+            {provincia && (
+              <View style={styles.locationContainer}>
+                <Text style={styles.fieldLabel}>Ciudad</Text>
+                <TouchableOpacity 
+                  style={styles.dropdownButton}
+                  onPress={() => setShowCityDropdown(true)}
+                >
+                  <Text style={[styles.dropdownText, !ciudad && styles.placeholderText]}>
+                    {ciudad || 'Selecciona una ciudad'}
+                  </Text>
+                  <MaterialIcons 
+                    name="keyboard-arrow-down" 
+                    size={24} 
+                    color={colors.themes.teacherSetup.textSecondary} 
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* Modal de Ciudades */}
+            <Modal
+              visible={showCityDropdown}
+              transparent={true}
+              animationType="slide"
+              onRequestClose={() => setShowCityDropdown(false)}
+            >
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalHeader}>
+                    <Text style={styles.modalTitle}>Seleccionar Ciudad - {provincia}</Text>
+                    <TouchableOpacity 
+                      onPress={() => setShowCityDropdown(false)}
+                      style={styles.closeButton}
+                    >
+                      <MaterialIcons name="close" size={24} color={colors.themes.teacherSetup.textSecondary} />
+                    </TouchableOpacity>
+                  </View>
+                  <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={true}>
+                    {getCitiesByProvince(provincia).map((city) => (
+                      <TouchableOpacity
+                        key={city}
+                        style={[styles.modalItem, ciudad === city && styles.modalItemSelected]}
+                        onPress={() => handleCitySelect(city)}
+                      >
+                        <Text style={[styles.modalItemText, ciudad === city && styles.modalItemTextSelected]}>
+                          {city}
+                        </Text>
+                        {ciudad === city && (
+                          <MaterialIcons name="check" size={20} color={colors.themes.teacherSetup.primary} />
+                        )}
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              </View>
+            </Modal>
             
             <Text style={styles.fieldLabel}>Nivel de Enseñanza</Text>
             <ChipGroup
@@ -986,6 +1110,86 @@ const styles = StyleSheet.create({
   timeSlotTextSelected: {
     color: 'white',
     marginRight: spacing.xs,
+  },
+  // Estilos para dropdowns de ubicación
+  locationContainer: {
+    marginBottom: spacing.lg,
+  },
+  dropdownButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.themes.teacherSetup.surface,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.themes.teacherSetup.textSecondary + '20',
+    ...elevation.sm,
+  },
+  dropdownText: {
+    ...typography.body,
+    color: colors.themes.teacherSetup.text,
+    flex: 1,
+  },
+  placeholderText: {
+    color: colors.themes.teacherSetup.textSecondary,
+  },
+  // Estilos para modales
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    backgroundColor: colors.themes.teacherSetup.surface,
+    borderRadius: radii.xl,
+    width: '90%',
+    maxHeight: '80%',
+    ...elevation.lg,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.themes.teacherSetup.textSecondary + '20',
+  },
+  modalTitle: {
+    ...typography.h3,
+    color: colors.themes.teacherSetup.text,
+    fontWeight: '600',
+  },
+  closeButton: {
+    padding: spacing.sm,
+  },
+  modalContent: {
+    maxHeight: 400,
+    paddingHorizontal: spacing.lg,
+  },
+  modalItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.themes.teacherSetup.textSecondary + '10',
+  },
+  modalItemSelected: {
+    backgroundColor: colors.themes.teacherSetup.primary + '10',
+  },
+  modalItemText: {
+    ...typography.body,
+    color: colors.themes.teacherSetup.text,
+    flex: 1,
+  },
+  modalItemTextSelected: {
+    color: colors.themes.teacherSetup.primary,
+    fontWeight: '600',
   },
 });
 
