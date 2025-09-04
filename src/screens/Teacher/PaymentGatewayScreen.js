@@ -36,12 +36,12 @@ export default function PaymentGatewayScreen({ navigation, route }) {
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 800,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 800,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
     ]).start();
   }, []);

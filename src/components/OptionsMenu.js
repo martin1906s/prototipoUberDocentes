@@ -16,7 +16,7 @@ export default function OptionsMenu({ navigation, theme = 'userSearch' }) {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 200,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
   };
 
@@ -24,7 +24,7 @@ export default function OptionsMenu({ navigation, theme = 'userSearch' }) {
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 200,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start(() => {
       setShowMenu(false);
     });

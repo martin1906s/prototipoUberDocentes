@@ -57,12 +57,12 @@ export default function TeacherSetupScreen({ navigation }) {
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: animations.normal,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: animations.normal,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
     ]).start();
   }, []);

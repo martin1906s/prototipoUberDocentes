@@ -30,12 +30,12 @@ export default function RoleSelectScreen({ navigation }) {
       Animated.timing(scaleAnimations[role], {
         toValue: 0.95,
         duration: 100,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
       Animated.timing(scaleAnimations[role], {
         toValue: 1,
         duration: 100,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
     ]).start();
 
