@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Animated } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Animated, Platform } from 'react-native';
 import GradientBackground from '../../components/GradientBackground';
 import AppButton from '../../components/AppButton';
 import AppCard from '../../components/AppCard';
