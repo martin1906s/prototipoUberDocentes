@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import GradientBackground from '../../components/GradientBackground';
-
+import AppButton from '../../components/AppButton';
 import TeacherCard from '../../components/TeacherCard';
 import DropdownList from '../../components/DropdownList';
 import OptionsMenu from '../../components/OptionsMenu';
@@ -197,9 +197,14 @@ export default function UserSearchScreen({ navigation }) {
             {filtered.length} {filtered.length === 1 ? 'docente encontrado' : 'docentes encontrados'}
           </Text>
           {filtered.length > 0 && (
-            <TouchableOpacity style={styles.sortButton} onPress={toggleFilters}>
-              <MaterialIcons name="sort" size={24} color="#0891B2" />
-            </TouchableOpacity>
+            <AppButton
+              iconOnly
+              leftIcon="sort"
+              onPress={toggleFilters}
+              variant="outline"
+              size="md"
+              style={styles.sortButton}
+            />
           )}
         </View>
       </View>
@@ -215,9 +220,14 @@ export default function UserSearchScreen({ navigation }) {
       <Text style={styles.emptySubtitle}>
         Intenta ajustar los filtros para encontrar más opciones
       </Text>
-      <TouchableOpacity style={styles.emptyActionButton} onPress={clearFilters}>
-        <MaterialIcons name="refresh" size={24} color="white" />
-      </TouchableOpacity>
+      <AppButton
+        iconOnly
+        leftIcon="refresh"
+        onPress={clearFilters}
+        variant="primary"
+        size="md"
+        style={styles.emptyActionButton}
+      />
     </View>
   );
 

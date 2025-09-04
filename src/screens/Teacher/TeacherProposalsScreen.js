@@ -125,10 +125,13 @@ export default function TeacherProposalsScreen({ navigation }) {
         <View style={styles.proposalsSection}>
           <View style={styles.proposalsHeader}>
             <Text style={styles.sectionTitle}>📬 Propuestas Recientes</Text>
-            <TouchableOpacity style={styles.filterButton}>
-              <MaterialIcons name="filter-list" size={20} color={colors.themes.teacherProposals.textSecondary} />
-              <Text style={styles.filterButtonText}>Filtros</Text>
-            </TouchableOpacity>
+            <AppButton
+              title="Filtros"
+              leftIcon="filter-list"
+              variant="outline"
+              size="sm"
+              style={styles.filterButton}
+            />
           </View>
 
           {proposals.length === 0 ? (
@@ -166,28 +169,34 @@ export default function TeacherProposalsScreen({ navigation }) {
                   <Text style={styles.proposalMessage}>{item.mensaje}</Text>
                   
                   <View style={styles.proposalActions}>
-                    <TouchableOpacity 
-                      style={[styles.actionButton, styles.detailsButton]}
+                    <AppButton
+                      iconOnly
+                      leftIcon="visibility"
                       onPress={() => handleViewDetails(item)}
-                    >
-                      <MaterialIcons name="visibility" size={24} color={colors.white} />
-                    </TouchableOpacity>
+                      variant="info"
+                      size="sm"
+                      style={[styles.actionButton, styles.detailsButton]}
+                    />
                     
                     {item.estado === 'pendiente' && (
                       <>
-                        <TouchableOpacity 
-                          style={[styles.actionButton, styles.acceptButton]}
+                        <AppButton
+                          iconOnly
+                          leftIcon="check"
                           onPress={() => actions.updateProposalStatus(item.id, 'aceptada')}
-                        >
-                          <MaterialIcons name="check" size={24} color={colors.white} />
-                        </TouchableOpacity>
+                          variant="success"
+                          size="sm"
+                          style={[styles.actionButton, styles.acceptButton]}
+                        />
                         
-                        <TouchableOpacity 
-                          style={[styles.actionButton, styles.rejectButton]}
+                        <AppButton
+                          iconOnly
+                          leftIcon="cancel"
                           onPress={() => actions.updateProposalStatus(item.id, 'rechazada')}
-                        >
-                          <MaterialIcons name="cancel" size={24} color={colors.white} />
-                        </TouchableOpacity>
+                          variant="danger"
+                          size="sm"
+                          style={[styles.actionButton, styles.rejectButton]}
+                        />
                       </>
                     )}
                   </View>
@@ -209,9 +218,14 @@ export default function TeacherProposalsScreen({ navigation }) {
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>📋 Detalles de la Propuesta</Text>
-              <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
-                <MaterialIcons name="close" size={24} color={colors.neutral600} />
-              </TouchableOpacity>
+              <AppButton
+                iconOnly
+                leftIcon="close"
+                onPress={closeModal}
+                variant="ghost"
+                size="sm"
+                style={styles.closeButton}
+              />
             </View>
 
             {selectedProposal && (
@@ -317,34 +331,40 @@ export default function TeacherProposalsScreen({ navigation }) {
 
             {/* Botones del Modal */}
             <View style={styles.modalActions}>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.closeModalButton]}
+              <AppButton
+                iconOnly
+                leftIcon="close"
                 onPress={closeModal}
-              >
-                <MaterialIcons name="close" size={24} color={colors.neutral600} />
-              </TouchableOpacity>
+                variant="outline"
+                size="md"
+                style={[styles.modalButton, styles.closeModalButton]}
+              />
               
               {selectedProposal?.estado === 'pendiente' && (
                 <View style={styles.modalActionButtons}>
-                  <TouchableOpacity 
-                    style={[styles.modalButton, styles.acceptModalButton]}
+                  <AppButton
+                    iconOnly
+                    leftIcon="check"
                     onPress={() => {
                       actions.updateProposalStatus(selectedProposal.id, 'aceptada');
                       closeModal();
                     }}
-                  >
-                    <MaterialIcons name="check" size={24} color={colors.white} />
-                  </TouchableOpacity>
+                    variant="success"
+                    size="md"
+                    style={[styles.modalButton, styles.acceptModalButton]}
+                  />
                   
-                  <TouchableOpacity 
-                    style={[styles.modalButton, styles.rejectModalButton]}
+                  <AppButton
+                    iconOnly
+                    leftIcon="cancel"
                     onPress={() => {
                       actions.updateProposalStatus(selectedProposal.id, 'rechazada');
                       closeModal();
                     }}
-                  >
-                    <MaterialIcons name="cancel" size={24} color={colors.white} />
-                  </TouchableOpacity>
+                    variant="danger"
+                    size="md"
+                    style={[styles.modalButton, styles.rejectModalButton]}
+                  />
                 </View>
               )}
             </View>

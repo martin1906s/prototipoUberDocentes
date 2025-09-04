@@ -133,19 +133,14 @@ export default function TeacherProfileScreen({ navigation }) {
               </TouchableOpacity>
             </View>
             
-            <TouchableOpacity 
+            <AppButton
+              title={isEditing ? 'Cancelar' : 'Editar'}
+              leftIcon={isEditing ? "close" : "edit"}
               onPress={() => setIsEditing(!isEditing)}
+              variant={isEditing ? "outline" : "primary"}
+              size="sm"
               style={styles.editButton}
-            >
-              <MaterialIcons 
-                name={isEditing ? "close" : "edit"} 
-                size={18} 
-                color={colors.themes.teacherSetup.primary} 
-              />
-              <Text style={styles.editButtonText}>
-                {isEditing ? 'Cancelar' : 'Editar'}
-              </Text>
-            </TouchableOpacity>
+            />
           </View>
 
           {/* Cards de información personal */}
@@ -419,9 +414,14 @@ export default function TeacherProfileScreen({ navigation }) {
                   onPress={handleSave}
                   style={styles.saveButton}
                 />
-                <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
-                  <MaterialIcons name="close" size={20} color="#EF4444" />
-                </TouchableOpacity>
+                <AppButton
+                  iconOnly
+                  leftIcon="close"
+                  onPress={handleCancel}
+                  variant="danger"
+                  size="sm"
+                  style={styles.cancelButton}
+                />
               </View>
             )}
           </View>

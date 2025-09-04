@@ -236,9 +236,14 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>📅 Seleccionar Fecha y Hora</Text>
-              <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
-                <MaterialIcons name="close" size={24} color={colors.neutral600} />
-              </TouchableOpacity>
+              <AppButton
+                iconOnly
+                leftIcon="close"
+                onPress={closeModal}
+                variant="ghost"
+                size="sm"
+                style={styles.closeButton}
+              />
             </View>
 
             <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
@@ -362,19 +367,23 @@ export default function UserTeacherDetailScreen({ route, navigation }) {
 
             {/* Botones del Modal */}
             <View style={styles.modalActions}>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.cancelButton]}
+              <AppButton
+                iconOnly
+                leftIcon="close"
                 onPress={closeModal}
-              >
-                <MaterialIcons name="close" size={20} color={colors.neutral600} />
-              </TouchableOpacity>
+                variant="outline"
+                size="md"
+                style={[styles.modalButton, styles.cancelButton]}
+              />
               
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.confirmButton]}
+              <AppButton
+                iconOnly
+                leftIcon="check"
                 onPress={handleConfirmContract}
-              >
-                <MaterialIcons name="check" size={20} color={colors.white} />
-              </TouchableOpacity>
+                variant="success"
+                size="md"
+                style={[styles.modalButton, styles.confirmButton]}
+              />
             </View>
           </View>
         </View>

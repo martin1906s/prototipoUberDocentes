@@ -120,9 +120,9 @@ export default function TeacherCard({ teacher, onPress }) {
 
       {/* Botón de acción */}
       <View style={styles.actionContainer}>
-        <TouchableOpacity
+        <View
           style={styles.contactButton}
-          onPress={() => {
+          onTouchEnd={() => {
             if (!state.userProfile) {
               navigation.navigate('UserRegister', { teacherId: teacher.id });
               return;
@@ -131,7 +131,7 @@ export default function TeacherCard({ teacher, onPress }) {
           }}
         >
           <MaterialIcons name="assignment-turned-in" size={24} color={colors.white} />
-        </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
