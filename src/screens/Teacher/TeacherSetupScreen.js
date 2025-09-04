@@ -244,12 +244,14 @@ export default function TeacherSetupScreen({ navigation }) {
                     </Text>
                   </View>
                 </View>
-                <TouchableOpacity 
+                <AppButton
+                  iconOnly
+                  leftIcon="swap-horiz"
                   onPress={() => navigation.reset({ index: 0, routes: [{ name: 'RoleSelect' }] })}
+                  variant="ghost"
+                  size="md"
                   style={styles.roleButton}
-                >
-                  <MaterialIcons name="swap-horiz" size={24} color="white" />
-                </TouchableOpacity>
+                />
               </View>
             </WebCompatibleLinearGradient>
           </Animated.View>
@@ -366,7 +368,9 @@ export default function TeacherSetupScreen({ navigation }) {
                   setEspecialidadInput('');
                 }}
               />
-              <TouchableOpacity
+              <AppButton
+                iconOnly
+                leftIcon="add"
                 onPress={() => {
                   const val = (especialidadInput || '').trim();
                   if (!val) return;
@@ -378,10 +382,10 @@ export default function TeacherSetupScreen({ navigation }) {
                   setEspecialidades([...especialidades, val]);
                   setEspecialidadInput('');
                 }}
+                variant="primary"
+                size="sm"
                 style={styles.addButton}
-              >
-                <MaterialIcons name="add" size={24} color={colors.white} />
-              </TouchableOpacity>
+              />
             </View>
             
             <View style={styles.specialtiesList}>
@@ -585,36 +589,24 @@ export default function TeacherSetupScreen({ navigation }) {
 
           {/* Botones */}
           <View style={styles.buttonsContainer}>
-            <TouchableOpacity 
+            <AppButton
+              title="Ver Demo"
+              leftIcon="visibility"
               onPress={handleAutocompletar}
+              variant="warning"
+              size="lg"
               style={styles.demoButton}
-            >
-              <WebCompatibleLinearGradient
-                colors={['#FF9800', '#FFA726']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.demoButtonGradient}
-              >
-                <MaterialIcons name="visibility" size={24} color="white" />
-                <Text style={styles.demoButtonText}>Ver Demo</Text>
-              </WebCompatibleLinearGradient>
-            </TouchableOpacity>
+            />
             
-            <TouchableOpacity 
+            <AppButton
+              title="Guardar Perfil"
+              leftIcon="save"
               onPress={handleGuardar}
-              style={styles.saveButton}
+              variant="success"
+              size="lg"
               disabled={Object.keys(errors).length > 0}
-            >
-              <WebCompatibleLinearGradient
-                colors={['#FF4757', '#FF6B6B']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.saveButtonGradient}
-              >
-                <MaterialIcons name="save" size={24} color="white" />
-                <Text style={styles.saveButtonText}>Guardar Perfil</Text>
-              </WebCompatibleLinearGradient>
-            </TouchableOpacity>
+              style={styles.saveButton}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
