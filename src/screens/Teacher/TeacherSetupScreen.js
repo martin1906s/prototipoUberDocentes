@@ -39,6 +39,7 @@ export default function TeacherSetupScreen({ navigation }) {
   const [selectedDay, setSelectedDay] = useState(0);
   const [showProvinceDropdown, setShowProvinceDropdown] = useState(false);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [schedule, setSchedule] = useState(state.teacherSchedule || {
     Lunes: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'],
     Martes: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'],
@@ -156,10 +157,10 @@ export default function TeacherSetupScreen({ navigation }) {
       };
       actions.setCurrentTeacher(tempTeacher);
       
-      console.log('Profile saved, navigating to PaymentGateway'); // Debug log
+      console.log('Profile saved, showing payment modal'); // Debug log
       
-      // Navegación directa sin Alert para evitar problemas en producción
-      navigation.navigate('PaymentGateway');
+      // Mostrar modal de pago en lugar de navegar
+      setShowPaymentModal(true);
       
     } catch (error) {
       console.error('Error saving profile:', error); // Debug log
@@ -202,6 +203,31 @@ export default function TeacherSetupScreen({ navigation }) {
       hours: slots.length,
       percentage: Math.round((slots.length / TIME_SLOTS.length) * 100)
     };
+  };
+
+  const handlePayment = () => {
+    // Simular pago exitoso
+    Alert.alert(
+      'Pago Exitoso',
+      'Tu registro ha sido completado exitosamente. Ahora puedes recibir propuestas de estudiantes.',
+      [
+        {
+          text: 'Continuar',
+          onPress: () => {
+            setShowPaymentModal(false);
+            // Marcar como pagado y navegar al dashboard
+            actions.setCurrentTeacher({
+              ...state.currentTeacher,
+              isPaid: true
+            });
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'TeacherTabs' }],
+            });
+          }
+        }
+      ]
+    );
   };
 
   const handleAutocompletar = () => {
@@ -736,6 +762,77 @@ export default function TeacherSetupScreen({ navigation }) {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Modal de Pago */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showPaymentModal}
+        onRequestClose={() => setShowPaymentModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>💳 Completar Registro</Text>
+              <TouchableOpacity 
+                onPress={() => setShowPaymentModal(false)}
+                style={styles.closeButton}
+              >
+                <MaterialIcons name="close" size={24} color={colors.neutral600} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalContent}>
+              <View style={styles.paymentInfo}>
+                <View style={styles.paymentIcon}>
+                  <MaterialIcons name="account-balance-wallet" size={48} color={colors.primary} />
+                </View>
+                
+                <Text style={styles.paymentTitle}>Registro de Docente</Text>
+                
+
+                <View style={styles.paymentDetails}>
+                  <View style={styles.paymentRow}>
+                    <Text style={styles.paymentLabel}>Comisión de registro:</Text>
+                    <Text style={styles.paymentAmount}>$25.00 USD</Text>
+                  </View>
+                  <View style={styles.paymentRow}>
+                    <Text style={styles.paymentLabel}>Procesamiento:</Text>
+                    <Text style={styles.paymentAmount}>$1.50 USD</Text>
+                  </View>
+                  <View style={styles.paymentDivider} />
+                  <View style={styles.paymentRow}>
+                    <Text style={styles.paymentTotalLabel}>Total:</Text>
+                    <Text style={styles.paymentTotalAmount}>$26.50 USD</Text>
+                  </View>
+                </View>
+
+                <Text style={styles.paymentNote}>
+                  Una vez completado el pago, tu perfil estará activo y podrás recibir propuestas de estudiantes.
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.modalActions}>
+              <AppButton
+                leftIcon="close"
+                onPress={() => setShowPaymentModal(false)}
+                variant="outline"
+                size="md"
+                style={[styles.modalButton, styles.cancelButton]}
+              />
+              
+              <AppButton
+                leftIcon="attach-money"
+                onPress={handlePayment}
+                variant="success"
+                size="md"
+                style={[styles.modalButton, styles.payButton]}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </GradientBackground>
   );
 }
@@ -1138,16 +1235,22 @@ const styles = StyleSheet.create({
   // Estilos para modales
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContainer: {
-    backgroundColor: colors.themes.teacherSetup.surface,
+    backgroundColor: colors.white,
     borderRadius: radii.xl,
     width: '90%',
     maxHeight: '80%',
-    ...elevation.lg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -1160,8 +1263,8 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     ...typography.h3,
-    color: colors.themes.teacherSetup.text,
-    fontWeight: '600',
+    color: colors.neutral900,
+    fontWeight: '700',
   },
   closeButton: {
     padding: spacing.sm,
@@ -1190,6 +1293,96 @@ const styles = StyleSheet.create({
   modalItemTextSelected: {
     color: colors.themes.teacherSetup.primary,
     fontWeight: '600',
+  },
+  // Estilos específicos para el modal de pago
+  paymentInfo: {
+    alignItems: 'center',
+    paddingVertical: spacing.xl,
+  },
+  paymentIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.primary + '20',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.lg,
+  },
+  paymentTitle: {
+    ...typography.h3,
+    color: colors.neutral900,
+    fontWeight: '700',
+    marginBottom: spacing.sm,
+    textAlign: 'center',
+  },
+  paymentDescription: {
+    ...typography.body,
+    color: colors.neutral700,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: spacing.xl,
+  },
+  paymentDetails: {
+    width: '100%',
+    backgroundColor: colors.neutral50,
+    borderRadius: radii.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.neutral200,
+  },
+  paymentRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  paymentLabel: {
+    ...typography.body,
+    color: colors.neutral600,
+  },
+  paymentAmount: {
+    ...typography.body,
+    color: colors.neutral900,
+    fontWeight: '600',
+  },
+  paymentDivider: {
+    height: 1,
+    backgroundColor: colors.neutral300,
+    marginVertical: spacing.sm,
+  },
+  paymentTotalLabel: {
+    ...typography.h4,
+    color: colors.neutral900,
+    fontWeight: '700',
+  },
+  paymentTotalAmount: {
+    ...typography.h4,
+    color: colors.primary,
+    fontWeight: '700',
+  },
+  paymentNote: {
+    ...typography.caption,
+    color: colors.neutral600,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    lineHeight: 18,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    padding: spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: colors.neutral200,
+    gap: spacing.md,
+  },
+  modalButton: {
+    flex: 1,
+  },
+  cancelButton: {
+    backgroundColor: colors.neutral200,
+  },
+  payButton: {
+    backgroundColor: colors.success,
   },
 });
 

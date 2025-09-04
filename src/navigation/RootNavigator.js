@@ -15,7 +15,6 @@ import TeacherSetupScreen from '../screens/Teacher/TeacherSetupScreen';
 import TeacherProposalsScreen from '../screens/Teacher/TeacherProposalsScreen';
 import TeacherProfileScreen from '../screens/Teacher/TeacherProfileScreen';
 import TeacherScheduleScreen from '../screens/Teacher/TeacherScheduleScreen';
-import PaymentGatewayScreen from '../screens/Teacher/PaymentGatewayScreen';
 
 
 import AdminDashboardScreen from '../screens/Admin/AdminDashboardScreen';
@@ -46,7 +45,6 @@ export default function RootNavigator() {
         {/* Docente */}
         <Stack.Screen name="TeacherTabs" component={TeacherTabs} />
         <Stack.Screen name="TeacherSetup" component={TeacherSetupScreen} />
-        <Stack.Screen name="PaymentGateway" component={PaymentGatewayScreen} />
 
         {/* Admin */}
         <Stack.Screen name="AdminTabs" component={AdminTabs} />
